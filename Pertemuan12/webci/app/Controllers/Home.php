@@ -41,4 +41,10 @@ class Home extends BaseController
         ];
         return view('meeting', $data);
     }
+    public function signout()
+{
+$session = session();
+$session->destroy();
+return redirect()->to('/Home');
+}
 }

@@ -17,7 +17,7 @@
 	<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
 		<div>
 			<div class="text-center mb-3">
-				<img src="<?= base_url('img/logo.png') ?>" alt="Logo STIS" width="75">
+				<img src="<?= base_url('css/assets/brand/Logo.png') ?>" alt="Logo STIS" width="75">
 			</div>
 			<h3 class="text-center mb-3">Please sign in</h3>
 			<?php if (session()->getFlashdata('msg')) : ?>
