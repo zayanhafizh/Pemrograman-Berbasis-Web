@@ -9,3 +9,11 @@ $routes->get('/', 'Home::index');
 $routes->match(['get', 'post'], '/portfolio/create','PortfolioController::create');
 $routes->get('/portfolio', 'PortfolioController::index');
 $routes->match(['get', 'post'], '/portfolio/create','PortfolioController::create');
+$routes->match(['get', 'post'], '/portfolio/create',
+'PortfolioController::create');
+$routes->match(['get', 'post'], '/portfolio/update/(:num)',
+'PortfolioController::update/$1');
+$routes->match(['get', 'post'], '/portfolio/update/(:num)',
+'PortfolioController::update/$1');
+$routes->delete('/portfolio/delete/(:num)',
+'PortfolioController::destroy/$1');

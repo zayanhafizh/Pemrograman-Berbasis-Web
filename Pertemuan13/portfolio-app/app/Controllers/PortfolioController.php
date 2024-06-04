@@ -58,4 +58,67 @@ class PortfolioController extends BaseController
         // mengirimkan data portfolio ke View
         echo view('portfolio/index', $data);
     }
+
+    public function update($id)
+    {
+        $model = new PortfolioModel();
+        //mengambil data portfolio berdasarkan parameter $id
+        if (! $portfolio = $model->find($id)) {
+        // jika data portfolio tidak ditemukan, maka akan dialihkan ke halaman 404
+        throw
+            \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+        // handle untuk request dengan method "post"
+        // mengecek apakah request http method = "post" dan apakah data yang dikirim valid atau tidak
+        if ($this->request->getMethod() === 'POST' && $this->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'image' => 'ext_in[image,png,jpg,jpeg]'
+        ])) {
+                $imageFile = $this->request->getFile('image');
+                $imageFileName = $imageFile->getRandomName();
+                if($imageFile->isValid()) {
+                    //menghapus file gambar sebelumnya
+                    unlink(ROOTPATH.'public/'.$portfolio->image);
+                    //menyimpan file gambar baru dari input file
+                    $imageFile->move(ROOTPATH.'public/images/', $imageFileName);
+                    $portfolio->image = "images/".$imageFileName;
+                }
+                
+                $portfolio->title = $this->request->getPost('title');
+                $portfolio->description = $this->request->getPost('description');
+                // jika terdapat perubahan, simpan perubahan data portfolio ke tabel portfolios
+                if ($portfolio->hasChanged()) {
+                    $model->save($portfolio);
+                }
+                return redirect()->to('/portfolio')->with('success_message',
+                'Successfuly update portfolio.');
+            }
+                // jika HTTP method adalah "POST" dan data yang dikirim tidak valid, maka akan mengirimkan pesan eror
+                elseif ($this->request->getMethod() === 'POST') {
+                    return redirect()->to('/portfolio/update/'.$portfolio->id)->withInput()->with('errors', $this->validator->getErrors());
+                }
+        // handle untuk request dengan method "get"
+        $data = [
+            'portfolio' => $portfolio
+            ];
+            echo view('portfolio/update', $data);
+    }
+    public function destroy($id)
+    {
+        $model = new PortfolioModel();
+
+        //handle untuk request dengan method "delete"
+        if($this->request->getMethod() === 'DELETE') {
+            if (! $portfolio = $model->find($id)) {
+                // jika data portfolio tidak ditemukan, maka akan dialihkan ke halaman 404
+                throw
+                \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+            // hapus data portfolio dari tabel portfolios
+            $model->delete($portfolio->id);
+        }
+        //handle untuk request dengan method selain "delete"
+        return redirect()->to('/portfolio');
+    }
 }
